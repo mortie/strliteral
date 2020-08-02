@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 
-void make_identifier(char *str) {
+static void make_identifier(char *str) {
 	char c;
 	size_t i;
 	for (i = 0; (c = str[i]) != '\0'; ++i) {
@@ -17,7 +17,7 @@ void make_identifier(char *str) {
 }
 
 /* strdup is actually a POSIX thing, not a C thing, so don't use it */
-char *dupstr(char *str) {
+static char *dupstr(char *str) {
 	size_t len = strlen(str);
 	char *dup = malloc(len + 1);
 	strcpy(dup, str);
@@ -25,7 +25,7 @@ char *dupstr(char *str) {
 	return dup;
 }
 
-void usage(const char *argv0) {
+static void usage(const char *argv0) {
 	printf("Usage: %s [options] [infile] [outfile]\n", argv0);
 	puts(
 			"Options:\n"
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 				fprintf(stderr, "%s requires an argument\n", arg);
 				goto fail;
 			}
-			maxlength = atoi(argv[++argidx]);
+			maxlength = (size_t)atoi(argv[++argidx]);
 		} else if (strcmp(arg, "--ident") == 0 || strcmp(arg, "-i") == 0) {
 			if (argidx + 1 >= argc) {
 				fprintf(stderr, "%s requires an argument\n", arg);
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 			buffer[linechar++] = '0' + ((c & 0070) >> 3);
 			buffer[linechar++] = '0' + ((c & 0007) >> 0);
 		} else if (c >= 32 && c <= 126 && c != '"' && c != '\\' && c != '?' && c != ':' && c != '%') {
-			buffer[linechar++] = c;
+			buffer[linechar++] = (char)c;
 		} else if (c == '\r') {
 			buffer[linechar++] = '\\';
 			buffer[linechar++] = 'r';
