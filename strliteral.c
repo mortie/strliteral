@@ -5,7 +5,8 @@
 
 void make_identifier(char *str) {
 	char c;
-	for (size_t i = 0; (c = str[i]) != '\0'; ++i) {
+	size_t i;
+	for (i = 0; (c = str[i]) != '\0'; ++i) {
 		if (!(
 				(c >= '0' && c <= '9') ||
 				(c >= 'a' && c <= 'z') ||
@@ -15,7 +16,7 @@ void make_identifier(char *str) {
 	}
 }
 
-// strdup is actually a POSIX thing, not a C thing, so don't use it
+/* strdup is actually a POSIX thing, not a C thing, so don't use it */
 char *dupstr(char *str) {
 	size_t len = strlen(str);
 	char *dup = malloc(len + 1);
