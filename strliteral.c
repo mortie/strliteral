@@ -123,33 +123,34 @@ int main(int argc, char **argv) {
 	while ((c = fgetc(inf)) != EOF) {
 		if (alwaysescape) {
 			buffer[linechar++] = '\\';
-			buffer[linechar++] = '0' + ((c & 0700) >> 6);
-			buffer[linechar++] = '0' + ((c & 0070) >> 3);
-			buffer[linechar++] = '0' + ((c & 0007) >> 0);
-		} else if (c >= 32 && c <= 126 && c != '"' && c != '\\' && c != '?' && c != ':' && c != '%') {
+			goto octal;
+		}
+
+		if (c >= 32 && c <= 126 && c != '"' && c != '\\' && c != '?' && c != ':' && c != '%') {
 			buffer[linechar++] = (char)c;
-		} else if (c == '\r') {
-			buffer[linechar++] = '\\';
+			goto endif;
+		}
+
+		buffer[linechar++] = '\\';
+
+		if (c == '\r') {
 			buffer[linechar++] = 'r';
 		} else if (c == '\n') {
-			buffer[linechar++] = '\\';
 			buffer[linechar++] = 'n';
 		} else if (c == '\t') {
-			buffer[linechar++] = '\\';
 			buffer[linechar++] = 't';
 		} else if (c == '\"') {
-			buffer[linechar++] = '\\';
 			buffer[linechar++] = '"';
 		} else if (c == '\\') {
 			buffer[linechar++] = '\\';
-			buffer[linechar++] = '\\';
 		} else {
-			buffer[linechar++] = '\\';
-			buffer[linechar++] = '0' + ((c & 0700) >> 6);
+	octal:
+			buffer[linechar++] = '0' + ((c & 0300) >> 6);
 			buffer[linechar++] = '0' + ((c & 0070) >> 3);
 			buffer[linechar++] = '0' + ((c & 0007) >> 0);
 		}
 
+	endif:
 		length += 1;
 
 		if (linechar >= maxlength) {
